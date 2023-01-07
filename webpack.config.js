@@ -5,14 +5,17 @@ const { ProvidePlugin } = require("webpack");
 const TerserWebpackPlugin = require('terser-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CssMinimizerWebpackPlugin = require('css-minimizer-webpack-plugin')
+const {CleanWebpackPlugin} = require('clean-webpack-plugin')
+const devServer = require('webpack-dev-server')
 module.exports = {
   mode: "development",
   entry: {
     index: path.resolve(__dirname, "./src/index.js"),
+    login: path.resolve(__dirname, "./src/login.js"),
   },
   output: {
     path: path.resolve(__dirname, "./dist"),
-    filename: "bundle.js",
+    filename: "[name].js",
   },
   module: {
     rules: [
@@ -20,7 +23,27 @@ module.exports = {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
+      {
+        test : /\.(png|svg|jpg|jpeg|gif)$/i,
+        type : 'asset',
+        parser:{
+            dataUrlCondition : {
+                maxSize : 8*1024
+            },
+        },
+        generator : {
+            filename : "images/[name].[hash:6][ext]"
+        }
+      }
     ],
+  },
+  devServer:{
+    static : {
+        directory : path.join(__dirname,'dist'),
+    },
+    compress : true,
+    port : 8080,
+    hot : true
   },
   optimization : {
     minimize : true,
@@ -32,6 +55,11 @@ module.exports = {
       template: path.resolve(__dirname, "./src/index.html"),
       chunk: ["index"],
     }),
+    new HtmlWebpackPlugin({
+        filename: "login.html",
+        template: path.resolve(__dirname, "./src/login.html"),
+        chunk: ["login"],
+      }),
     new CopyWebpackPlugin({
       patterns: [
         {
@@ -47,7 +75,8 @@ module.exports = {
     new MiniCssExtractPlugin({
         filename : 'css/[name].css',
         chunkFilename : 'css/[name].chunk.css'
-    })
+    }),
+    new CleanWebpackPlugin()
   ],
   resolve:{
     alias:{
