@@ -2,6 +2,9 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const { ProvidePlugin } = require("webpack");
+const TerserWebpackPlugin = require('terser-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const CssMinimizerWebpackPlugin = require('css-minimizer-webpack-plugin')
 module.exports = {
   mode: "development",
   entry: {
@@ -15,9 +18,13 @@ module.exports = {
     rules: [
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
     ],
+  },
+  optimization : {
+    minimize : true,
+    minimizer : [new TerserWebpackPlugin(), new CssMinimizerWebpackPlugin]
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -37,6 +44,10 @@ module.exports = {
       $: "jquery",
       jQuery: "jquery",
     }),
+    new MiniCssExtractPlugin({
+        filename : 'css/[name].css',
+        chunkFilename : 'css/[name].chunk.css'
+    })
   ],
   resolve:{
     alias:{
