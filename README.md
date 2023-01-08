@@ -1,6 +1,6 @@
 # ZBestPC_Modular
 # 專案描述
-本專案是原生Js項目升級模塊化開發的練手項目，參考了開原項目ZBestPC  
+本專案是使用webpack5對原生Js項目升級模塊化開發的練手項目，參考了開原項目ZBestPC  
 來源:https://github.com/adminlly/ZBestPC
 
 # 功能描述
